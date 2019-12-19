@@ -1,0 +1,37 @@
+<div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">
+  <form #form="ngForm" validate>
+    <div class="form-row">
+      <div class="form-group" *ngFor="let node of dynamicForm.fields" [ngClass]="node.class">
+        <label [attr.for]="node.name" class="mt-2">{{node.label}}</label>
+        <div [ngSwitch]="true">
+          <input *ngSwitchCase="node.fieldType == 'input'" [type]="node.type" [name]="node.name" ngModel [placeholder]="node.placeholder" [required]=node.required class="form-control" [id]="node.id" [(ngModel)]="node.value">
+          <select *ngSwitchCase="node.fieldType == 'select'" class="custom-select mr-sm-2" [required]=node.required [name]="node.name" [id]="node.id" [(ngModel)]="node.value">
+            <!-- <option>Please select </option> -->
+            <option *ngFor="let opt of node.options | keyvalue" [value]="opt.value">{{opt.key}}</option>
+          </select>
+          <a *ngIf="node.addNew" (click)="onClick(node.addNew, form)"><mat-icon class="pt-1" style="width: 11px; font-size: 13px;" *ngIf="node.addNew.icon">add_circle_outline</mat-icon> {{node.addNew.label}}</a>
+          <textarea *ngSwitchCase="node.fieldType == 'textarea'" [required]=node.required rows="node.rows" cols="node.cols" [name]="node.name" [id]="node.id" 
+            ngModel class="form-control" [placeholder]="node.placeholder" [required]="node.required" [(ngModel)]="node.value"></textarea>
+          <ng-container *ngSwitchCase="node.fieldType == 'radio'">
+            <label *ngFor="let opt of node.options | keyvalue">
+              <input type="radio" [name]="node.name" [id]="node.id" ngModel [value]="opt.value">&nbsp;{{opt.key}}&nbsp;&nbsp;
+            </label>
+          </ng-container>
+          <ng-container *ngSwitchCase="node.fieldType == 'checkbox'">
+            <label *ngFor="let opt of node.options | keyvalue; let i = index;">
+              <input type="checkbox" [name]="node.name" [id]="node.id" [value]="opt.value" (change)="onChange(opt.value, node.name, $event.target.checked)">&nbsp;{{opt.key}}&nbsp;&nbsp;
+            </label>
+          </ng-container>
+          <div *ngIf="form.submitted">
+            <div *ngIf="form.form.controls[node.name].status == 'INVALID'" class="text-danger pt-2">{{node.message}}
+            </div>
+          </div>
+          <div *ngIf="node.name == 'email' && form.form.controls[node.name].touched && form.form.controls[node.name].status == 'INVALID'" class="text-danger">Email must be a valid email address</div>
+        </div>
+      </div>
+    </div>
+    <div class="d-flex" [ngClass]="dynamicForm.button_main_class">
+      <button *ngFor="let button of dynamicForm.buttons; let i = index" [type]="button.type" [ngClass]="[ dynamicForm.buttons.length-1 == i ?  button.class : 'mr-2 ' +  button.class]" (click)="onClick(button,form)">{{button.label}}</button>
+    </div>
+  </form>
+</div>

@@ -1,0 +1,56 @@
+<div class="container my-3 border px-0">
+    <app-dynamic-table [table_data]="table_data" (methods)="mainMethod($event)"></app-dynamic-table>
+
+    <ng-template #addUser let-modal>
+        <div class="modal-header">
+            <h4 class="modal-title" id="modal-basic-title">Add User</h4>
+            <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <app-dynamic-form [dynamicForm]="user_form_data" (methods)="mainMethod($event)"></app-dynamic-form>
+        </div>
+    </ng-template>
+
+    <ng-template #addRole let-modal>
+        <div class="modal-header">
+            <h4 class="modal-title" id="modal-basic-title">Add Role</h4>
+            <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <app-dynamic-form [dynamicForm]="role_form_data" (methods)="mainMethod($event)"></app-dynamic-form>
+        </div>
+    </ng-template>
+
+    <ng-template #editUser let-modal>
+        <div class="modal-header">
+            <h4 class="modal-title" id="modal-basic-title">Edit User</h4>
+            <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <app-dynamic-form [dynamicForm]="edit_user_form_data" (methods)="mainMethod($event)"></app-dynamic-form>
+        </div>
+    </ng-template>
+
+
+    <ng-template #deleteUser let-modal>
+        <div class="modal-header">
+            <h4 class="modal-title" id="modal-basic-title">Delete User</h4>
+            <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            Are you sure want to delete user?
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-danger" (click)="deleteUserMethod('ok')">Ok</button>
+            <button type="button" class="btn btn-outline-dark" (click)="deleteUserMethod('cancel')">Cancel</button>
+        </div>
+    </ng-template>
+</div>

@@ -1,0 +1,87 @@
+<div class="basic-container">
+    <div class="d-flex my-3">
+        <div class="col-6 col-sm-6 col-md-6 col-lg-6 col-xl-6"></div>
+        <div class="col-6 col-sm-6 col-md-6 col-lg-6 col-xl-6 d-flex pr-0">
+            <!-- Search -->
+            <div class="mr-3 mb-md-0 mt-3 mt-md-0" *ngIf="table_data.search" [ngClass]="table_data.search.class">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Search" aria-describedby="basic-addon1" [(ngModel)]="search">
+                    <div class="input-group-append">
+                        <span class="input-group-text" id="basic-addon1">
+                            <mat-icon>search</mat-icon>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <!-- Bulk Actions -->
+            <div class="d-contents px-0" *ngIf="table_data.bulk_actions" [ngClass]="table_data.bulk_actions.class">
+                <div class="d-flex align-items-center mr-3">
+                    <div [ngClass]="{'btn-group': table_data.bulk_actions.button_group == true}">
+                        <button *ngFor="let action of table_data.bulk_actions.buttons" class="btn" style="height: 38px"
+                            [ngClass]="action.class" [id]="action.id" [title]="action.title"
+                            [ngClass]="{'mr-2': !table_data.bulk_actions.button_group}"
+                            (click)="onClick(action)">
+                            <mat-icon *ngIf="action.icon">{{action.icon}}</mat-icon>
+                            <p *ngIf="action.name">{{action.name}}</p>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <table class="table mat-elevation-z8" [ngClass]="table_data.class">
+        <thead>
+            <tr>
+                <!-- Select All CheckBox -->
+                <td *ngIf="table_data.checkbox"><input type="checkbox" (click)="selectAll($event)" [(ngModel)]="select_current_all"></td>
+                <!-- Table Headers -->
+                <th *ngFor="let header of table_data.headers">{{header}}</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Check If Pagination Exists in table_data -->
+            <ng-template *ngIf="table_data.pagination || table_data.data.length != 0; then ifCond; else elseIfCond"></ng-template>
+            <!-- If Pagination Exists -->
+            <ng-template #ifCond>
+                <tr *ngFor="let item of table_data.data | paginate: {itemsPerPage: table_data.pagination.itemsPerPage, currentPage: table_data.pagination.currentPage, totalItems: table_data.data.length} | search : search;let i = index">
+                    <td *ngIf="table_data.checkbox"><input type="checkbox" [value]="i" [(ngModel)]="item.checked" (change)="checkbox_toggle(item[table_data.checkbox])"></td>
+                    <td *ngFor="let header of table_data.headers">{{item[header]}}</td>
+                    <td *ngIf="table_data.options">
+                        <div ngbDropdown class="d-inline-block wrapper">
+                            <p id="dropdown" ngbDropdownToggle>
+                                <mat-icon class="pointer">more_horiz</mat-icon>
+                            </p>
+                            <div ngbDropdownMenu aria-labelledby="dropdown">
+                                <button ngbDropdownItem *ngFor="let option of table_data.options.dropdown_option" (click)="onClick({'method' : table_data.options[option].method, 'value': table_data.data[i]})">{{option}}</button>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <p *ngIf="table_data.data.length == 0">Data doesn't exist</p>
+            </ng-template>
+            <!-- If Pagination Doesn't Exists -->
+            <ng-template #elseIfCond>
+                <tr *ngFor="let item of table_data.data | search : search;let i = index">
+                    <td *ngIf="table_data.checkbox"><input type="checkbox" [value]="i" [(ngModel)]="item.checked" (change)="checkbox_toggle(item[table_data.checkbox])"></td>
+                    <td *ngFor="let header of table_data.headers">{{item[header]}}</td>
+                    <td *ngIf="table_data.options">
+                        <div ngbDropdown class="d-inline-block wrapper">
+                            <p id="dropdown" ngbDropdownToggle>
+                                <mat-icon class="pointer">more_horiz</mat-icon>
+                            </p>
+                            <div ngbDropdownMenu aria-labelledby="dropdown">
+                                <button ngbDropdownItem *ngFor="let option of table_data.options.dropdown_option" (click)="onClick(table_data.options[option])">{{option}}</button>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <ng-template *ngIf="table_data.pagination || table_data.data.length != 0; then pagination"></ng-template>
+            </ng-template>
+        </tbody>
+    </table>
+</div>
+<!-- Pagination -->
+
+    <pagination-controls class="float-right" *ngIf="table_data.pagination" (pageChange)="pageChanged($event)"></pagination-controls>
+<div *ngIf="table_data.pagination || table_data.data.length != 0; then pagination">
+</div>
